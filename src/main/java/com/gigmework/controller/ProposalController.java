@@ -58,4 +58,41 @@ public class ProposalController {
         proposalRepository.save(proposal);
         return ResponseEntity.ok(proposal);
     }
+
+    /**
+     * Returns a proposal by id.
+     *
+     * @param gigId the gig id
+     * @param proposalId the proposal id
+     * @return the proposal or 404 if not found
+     */
+    @GetMapping("/{proposalId}")
+    public ResponseEntity<Proposal> getProposal(@PathVariable Long gigId,
+                                                @PathVariable Long proposalId) {
+        return proposalRepository.findById(proposalId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Updates an existing proposal.
+     *
+     * @param gigId the gig id
+     * @param proposalId the id of the proposal to update
+     * @param updated updated proposal details
+     * @return the updated proposal or 404 if not found
+     */
+    @PutMapping("/{proposalId}")
+    public ResponseEntity<Proposal> updateProposal(@PathVariable Long gigId,
+                                                   @PathVariable Long proposalId,
+                                                   @Valid @RequestBody Proposal updated) {
+        return proposalRepository.findById(proposalId).map(existing -> {
+            existing.setBidAmount(updated.getBidAmount());
+            existing.setEtaDays(updated.getEtaDays());
+            existing.setCoverLetter(updated.getCoverLetter());
+            existing.setStatus(updated.getStatus());
+            Proposal saved = proposalRepository.save(existing);
+            return ResponseEntity.ok(saved);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

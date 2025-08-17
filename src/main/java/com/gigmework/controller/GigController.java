@@ -47,4 +47,53 @@ public class GigController {
         gigRepository.save(gig);
         return ResponseEntity.ok(gig);
     }
+
+    /**
+     * Returns a single gig by its id.
+     *
+     * @param id the gig identifier
+     * @return the gig or 404 if not found
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Gig> getGig(@PathVariable Long id) {
+        return gigRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Updates an existing gig.
+     *
+     * @param id the id of the gig to update
+     * @param updatedGig the updated gig details
+     * @return the updated gig or 404 if not found
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Gig> updateGig(@PathVariable Long id, @Valid @RequestBody Gig updatedGig) {
+        return gigRepository.findById(id).map(existing -> {
+            existing.setTitle(updatedGig.getTitle());
+            existing.setDescription(updatedGig.getDescription());
+            existing.setBudgetMin(updatedGig.getBudgetMin());
+            existing.setBudgetMax(updatedGig.getBudgetMax());
+            existing.setSkillsRequired(updatedGig.getSkillsRequired());
+            existing.setStatus(updatedGig.getStatus());
+            Gig saved = gigRepository.save(existing);
+            return ResponseEntity.ok(saved);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Deletes a gig by id.
+     *
+     * @param id the gig id
+     * @return 204 No Content or 404 if not found
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGig(@PathVariable Long id) {
+        if (!gigRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        gigRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

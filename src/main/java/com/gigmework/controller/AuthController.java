@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.List;
 
 /**
  * Controller handling user registration and login. For demonstration
@@ -56,5 +57,25 @@ public class AuthController {
     public ResponseEntity<User> login(@RequestParam String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         return userOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Returns all freelancers registered in the system.
+     *
+     * @return list of freelancers
+     */
+    @GetMapping("/freelancers")
+    public ResponseEntity<List<User>> listFreelancers() {
+        return ResponseEntity.ok(userRepository.findByRole(UserRole.FREELANCER));
+    }
+
+    /**
+     * Returns all clients registered in the system.
+     *
+     * @return list of clients
+     */
+    @GetMapping("/clients")
+    public ResponseEntity<List<User>> listClients() {
+        return ResponseEntity.ok(userRepository.findByRole(UserRole.CLIENT));
     }
 }
