@@ -15,8 +15,17 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Include the H2 database for in‑memory development.  This allows the
+    // application to start up without any external database.  The H2
+    // dependency is scoped as runtimeOnly so it is not included in
+    // compile or test classpaths, but is available at runtime.
+    runtimeOnly 'com.h2database:h2'
+
+    // PostgreSQL driver for when you switch to a real database.  If you
+    // override spring.datasource.url to a PostgreSQL instance (see
+    // application.properties), this driver will be used.  You can remove
+    // this line if you do not plan to use PostgreSQL.
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
